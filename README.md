@@ -26,11 +26,12 @@ Sebagai student, Anda akan dapat:
 
 ```
 TL-Session/
-├── week8/          # Materi Week 8
-├── week9/          # Materi Week 9
+├── week7/          # Materi Week 7 - JavaScript Fundamentals & Problem Solving
+├── week8/          # Materi Week 8 - JavaScript Advanced Features
+├── week9/          # Materi Week 9 - TypeScript & Testing
 │   ├── day2/       # Sesi Day 2
 │   └── ts-demo/    # Demo TypeScript
-├── week10/         # Materi Week 10 (coming soon)
+├── week10/         # Materi Week 10 - Common Mistakes & Best Practices
 └── README.md       # File ini
 ```
 
@@ -38,9 +39,10 @@ TL-Session/
 
 | Week | Topik Utama | Status | Deskripsi |
 |------|-------------|--------|-----------|
-| Week 8 | JavaScript Fundamentals | ✅ Selesai | Dasar-dasar JavaScript, ES6+ features |
+| Week 7 | JavaScript Fundamentals & Problem Solving | ✅ Selesai | Algoritma, pseudocode, flowchart, JavaScript essentials, DOM, ES6+, async programming |
+| Week 8 | JavaScript Advanced Features | ✅ Selesai | Advanced JavaScript concepts, modern features, best practices |
 | Week 9 | TypeScript & Testing | ✅ Selesai | TypeScript, Jest testing, async programming |
-| Week 10 | Backend Development | 🚧 Dalam Proses | Node.js, Express, Database |
+| Week 10 | Common Mistakes & Best Practices | ✅ Selesai | Error analysis, code review, improvement recommendations |
 
 ## 🛠️ Teknologi yang Dipelajari
 
@@ -83,16 +85,22 @@ npm install
 
 ### 3. Jalankan Contoh Code
 ```bash
-# JavaScript
+# Week 7 - JavaScript Fundamentals
+# Buka file week7/week7.md untuk melihat contoh dan penjelasan
+
+# Week 8 - JavaScript Advanced
 node week8/week8.js
 
-# TypeScript
+# Week 9 - TypeScript
 cd week9/day2
 npx ts-node hello.ts
 
-# Testing
+# Week 9 - Testing
 cd week9/ts-demo
 npm test
+
+# Week 10 - Best Practices
+# Buka file week10/week10.md untuk melihat analisis dan rekomendasi
 ```
 
 ## 📖 Panduan Belajar untuk Pemula
