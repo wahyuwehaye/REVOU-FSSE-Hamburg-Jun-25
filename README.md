@@ -32,6 +32,8 @@ TL-Session/
 │   ├── day2/       # Sesi Day 2
 │   └── ts-demo/    # Demo TypeScript
 ├── week10/         # Materi Week 10 - Common Mistakes & Best Practices
+├── week13/         # Materi Week 13 - React & Next.js Intensive
+├── week14/         # Materi Week 14 - Next.js TypeScript & Advanced Practices
 └── README.md       # File ini
 ```
 
@@ -43,6 +45,8 @@ TL-Session/
 | Week 8 | JavaScript Advanced Features | ✅ Selesai | Advanced JavaScript concepts, modern features, best practices |
 | Week 9 | TypeScript & Testing | ✅ Selesai | TypeScript, Jest testing, async programming |
 | Week 10 | Common Mistakes & Best Practices | ✅ Selesai | Error analysis, code review, improvement recommendations |
+| Week 13 | React & Next.js Intensive | ✅ Selesai | React fundamentals, Next.js App Router, Tailwind, CRUD REST API |
+| Week 14 | Next.js TypeScript Advanced | ✅ Selesai | TypeScript setup, routing, forms, API CRUD, error handling |
 
 ## 🛠️ Teknologi yang Dipelajari
 
