@@ -88,6 +88,7 @@ npm install --prefix week14/examples/next-ts-starter
 npm install --prefix week14/examples/next-ts-routing
 npm install --prefix week14/examples/next-ts-forms
 npm install --prefix week14/demo/todo-ts-next
+npm install --prefix week14/demo/platzi-shop
 ```
 
 ### 3. Jalankan Contoh Code
@@ -118,6 +119,7 @@ npm run dev --prefix week14/examples/next-ts-starter
 npm run dev --prefix week14/examples/next-ts-routing
 npm run dev --prefix week14/examples/next-ts-forms
 npm run dev --prefix week14/demo/todo-ts-next
+npm run dev --prefix week14/demo/platzi-shop
 ```
 
 ## 📖 Panduan Belajar untuk Pemula

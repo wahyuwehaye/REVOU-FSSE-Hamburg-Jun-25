@@ -8,6 +8,9 @@ Materi minggu ini fokus pada migrasi Next.js ke TypeScript, pengaturan routing l
   - `next-ts-starter`
   - `next-ts-routing`
   - `next-ts-forms`
+- `demo/` – Proyek demo lengkap:
+  - `todo-ts-next` (stateful CRUD + middleware)
+  - `platzi-shop` (FakeAPI fetch, forms, routing lanjutan)
 - `exercises/` & `projects/` – ruang kosong untuk latihan tambahan.
 
 ## Cara Menggunakan
