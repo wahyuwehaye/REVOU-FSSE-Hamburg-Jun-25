@@ -76,15 +76,18 @@ cd REVOU-FSSE-Hamburg-Jun-25
 
 ### 2. Install Dependencies
 ```bash
-# Untuk setiap week yang memiliki package.json
-cd week8
-npm install
-
-cd ../week9/day2
-npm install
-
-cd ../ts-demo
-npm install
+# Jalankan per folder (menggunakan prefix agar tetap berada di root repo)
+npm install --prefix week8
+npm install --prefix week9/day2
+npm install --prefix week9/ts-demo
+npm install --prefix week13/examples/react-basic
+npm install --prefix week13/examples/next-basic
+npm install --prefix week13/examples/next-tailwind
+npm install --prefix week13/examples/crud-next-restapi
+npm install --prefix week14/examples/next-ts-starter
+npm install --prefix week14/examples/next-ts-routing
+npm install --prefix week14/examples/next-ts-forms
+npm install --prefix week14/demo/todo-ts-next
 ```
 
 ### 3. Jalankan Contoh Code
@@ -95,16 +98,26 @@ npm install
 # Week 8 - JavaScript Advanced
 node week8/week8.js
 
-# Week 9 - TypeScript
-cd week9/day2
-npx ts-node hello.ts
+# Week 9 - TypeScript CLI Demo
+npx ts-node week9/day2/hello.ts
 
 # Week 9 - Testing
-cd week9/ts-demo
-npm test
+npm test --prefix week9/ts-demo
 
 # Week 10 - Best Practices
 # Buka file week10/week10.md untuk melihat analisis dan rekomendasi
+
+# Week 13 - React & Next.js Examples
+npm run dev --prefix week13/examples/react-basic
+npm run dev --prefix week13/examples/next-basic
+npm run dev --prefix week13/examples/next-tailwind
+npm run dev --prefix week13/examples/crud-next-restapi
+
+# Week 14 - Next.js + TypeScript Examples
+npm run dev --prefix week14/examples/next-ts-starter
+npm run dev --prefix week14/examples/next-ts-routing
+npm run dev --prefix week14/examples/next-ts-forms
+npm run dev --prefix week14/demo/todo-ts-next
 ```
 
 ## 📖 Panduan Belajar untuk Pemula
