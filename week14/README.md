@@ -11,6 +11,7 @@ Materi minggu ini fokus pada migrasi Next.js ke TypeScript, pengaturan routing l
 - `demo/` – Proyek demo lengkap:
   - `todo-ts-next` (stateful CRUD + middleware)
   - `platzi-shop` (FakeAPI fetch, forms, routing lanjutan)
+  - `simple-crud` (CRUD catatan super ringkas untuk live demo cepat)
 - `exercises/` & `projects/` – ruang kosong untuk latihan tambahan.
 
 ## Cara Menggunakan

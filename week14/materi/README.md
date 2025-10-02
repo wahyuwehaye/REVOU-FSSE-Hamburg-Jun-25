@@ -19,7 +19,7 @@
 | Media & SEO | `11-working-with-images.md`, `12-seo-nextjs.md` | `examples/next-ts-starter` |
 | Forms & CRUD | `13-intro-forms-react.md`, `14-react-hook-form.md`, `15-crud-api-typescript.md` | `examples/next-ts-forms` |
 | Error Handling | `16-error-handling-best-practices.md` | `examples/next-ts-forms` |
-| Demo Projects | — | `demo/todo-ts-next`, `demo/platzi-shop` |
+| Demo Projects | — | `demo/todo-ts-next`, `demo/platzi-shop`, `demo/simple-crud` |
 
 ## Struktur Folder
 | Folder | Konten |

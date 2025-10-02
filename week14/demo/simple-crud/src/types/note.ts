@@ -1,0 +1,1 @@
+export interface Note {\n  id: string;\n  title: string;\n  content: string;\n  createdAt: string;\n  updatedAt: string;\n}\n\nexport type NoteInput = {\n  title: string;\n  content: string;\n};\n\nexport type NotePatch = Partial<Pick<Note, 'title' | 'content'>>;\n
