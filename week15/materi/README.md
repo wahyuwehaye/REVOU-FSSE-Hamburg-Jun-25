@@ -19,6 +19,7 @@
 ## Demo Project Referensi
 - `examples/next-ts-data-safety`
 - `examples/next-ts-conversion-guide`
+- `projects/revo-shop`
 
 ## Rekomendasi Live Session
 - Gunakan pola jelaskan → tunjuk contoh → ajak peserta coba kecil → simpulkan.

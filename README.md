@@ -94,6 +94,7 @@ npm install --prefix week14/demo/platzi-shop
 npm install --prefix week14/demo/simple-crud
 npm install --prefix week15/examples/next-ts-data-safety
 npm install --prefix week15/examples/next-ts-conversion-guide
+npm install --prefix week15/projects/revo-shop
 ```
 
 ### 3. Jalankan Contoh Code
@@ -128,6 +129,7 @@ npm run dev --prefix week14/demo/platzi-shop
 npm run dev --prefix week14/demo/simple-crud
 npm run dev --prefix week15/examples/next-ts-data-safety
 npm run dev --prefix week15/examples/next-ts-conversion-guide
+npm run dev --prefix week15/projects/revo-shop
 ```
 
 ## 📖 Panduan Belajar untuk Pemula

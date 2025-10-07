@@ -7,6 +7,7 @@ Minggu ini menegaskan kembali pondasi TypeScript di Next.js dengan pendekatan be
 - `examples/` – dua proyek Next.js TypeScript:
   - `next-ts-data-safety` – mencontohkan typed fetch + validasi Zod
   - `next-ts-conversion-guide` – template migrasi `.jsx` → `.tsx`
+- `projects/` – milestone lengkap `revo-shop` (auth, CRUD, state, testing)
 
 ## Saran Alur Presentasi 25 Menit
 | Menit | Agenda | Demo |
