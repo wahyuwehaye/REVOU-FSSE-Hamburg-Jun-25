@@ -34,6 +34,7 @@ TL-Session/
 ├── week10/         # Materi Week 10 - Common Mistakes & Best Practices
 ├── week13/         # Materi Week 13 - React & Next.js Intensive
 ├── week14/         # Materi Week 14 - Next.js TypeScript & Advanced Practices
+├── week15/         # Materi Week 15 - TypeScript Foundations for Next.js
 └── README.md       # File ini
 ```
 
@@ -47,6 +48,7 @@ TL-Session/
 | Week 10 | Common Mistakes & Best Practices | ✅ Selesai | Error analysis, code review, improvement recommendations |
 | Week 13 | React & Next.js Intensive | ✅ Selesai | React fundamentals, Next.js App Router, Tailwind, CRUD REST API |
 | Week 14 | Next.js TypeScript Advanced | ✅ Selesai | TypeScript setup, routing, forms, API CRUD, error handling |
+| Week 15 | TypeScript Foundations for Next.js | ✅ Selesai | Setup ulang, konfigurasi, tipe dasar, strategi migrasi `.tsx` |
 
 ## 🛠️ Teknologi yang Dipelajari
 
@@ -90,6 +92,8 @@ npm install --prefix week14/examples/next-ts-forms
 npm install --prefix week14/demo/todo-ts-next
 npm install --prefix week14/demo/platzi-shop
 npm install --prefix week14/demo/simple-crud
+npm install --prefix week15/examples/next-ts-data-safety
+npm install --prefix week15/examples/next-ts-conversion-guide
 ```
 
 ### 3. Jalankan Contoh Code
@@ -122,6 +126,8 @@ npm run dev --prefix week14/examples/next-ts-forms
 npm run dev --prefix week14/demo/todo-ts-next
 npm run dev --prefix week14/demo/platzi-shop
 npm run dev --prefix week14/demo/simple-crud
+npm run dev --prefix week15/examples/next-ts-data-safety
+npm run dev --prefix week15/examples/next-ts-conversion-guide
 ```
 
 ## 📖 Panduan Belajar untuk Pemula
