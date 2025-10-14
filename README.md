@@ -35,6 +35,7 @@ TL-Session/
 ├── week13/         # Materi Week 13 - React & Next.js Intensive
 ├── week14/         # Materi Week 14 - Next.js TypeScript & Advanced Practices
 ├── week15/         # Materi Week 15 - TypeScript Foundations for Next.js
+├── week16/         # Materi Week 16 - Advanced Next.js Concepts
 └── README.md       # File ini
 ```
 
@@ -49,6 +50,7 @@ TL-Session/
 | Week 13 | React & Next.js Intensive | ✅ Selesai | React fundamentals, Next.js App Router, Tailwind, CRUD REST API |
 | Week 14 | Next.js TypeScript Advanced | ✅ Selesai | TypeScript setup, routing, forms, API CRUD, error handling |
 | Week 15 | TypeScript Foundations for Next.js | ✅ Selesai | Setup ulang, konfigurasi, tipe dasar, strategi migrasi `.tsx` |
+| Week 16 | Advanced Next.js Concepts | ✅ Selesai | Middleware & auth, state management, custom hooks, optimasi performa |
 
 ## 🛠️ Teknologi yang Dipelajari
 
@@ -95,6 +97,9 @@ npm install --prefix week14/demo/simple-crud
 npm install --prefix week15/examples/next-ts-data-safety
 npm install --prefix week15/examples/next-ts-conversion-guide
 npm install --prefix week15/projects/revo-shop
+npm install --prefix week16/examples/auth-middleware-sandbox
+npm install --prefix week16/examples/state-hooks-lab
+npm install --prefix week16/projects/secure-notes-portal
 ```
 
 ### 3. Jalankan Contoh Code
