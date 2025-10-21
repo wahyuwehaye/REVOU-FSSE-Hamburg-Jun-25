@@ -28,15 +28,17 @@ todo-app-with-tests/
 │   │       ├── TodoForm.tsx
 │   │       └── TodoForm.test.tsx
 │   ├── hooks/
-│   │   ├── useTodos.ts
-│   │   └── useTodos.test.ts
-│   ├── utils/
+│   │   └── useTodos.ts
+│   ├── lib/
 │   │   ├── storage.ts
 │   │   └── storage.test.ts
 │   └── types/
 │       └── todo.ts
 ├── jest.config.mjs
 ├── jest.setup.js
+├── next.config.mjs
+├── tsconfig.json
+├── .husky/
 └── package.json
 ```
 
@@ -46,6 +48,7 @@ todo-app-with-tests/
 
 ```bash
 npm install
+npx husky install
 ```
 
 ### Run Development
@@ -66,6 +69,16 @@ npm run test:watch
 # With coverage
 npm run test:coverage
 ```
+
+### Husky Hooks
+
+Pastikan hook aktif setelah install dependencies:
+
+```bash
+npx husky install
+```
+
+Default hook `pre-commit` akan menjalankan `npm run lint` dan `npm test`. Ubah skrip di `.husky/pre-commit` bila ingin menambahkan pengecekan lain (misalnya `npm run test:coverage`).
 
 ## 🧪 Testing Coverage
 
@@ -100,7 +113,7 @@ npm run test:coverage
   - Clear completed
   - LocalStorage integration
 
-#### 3. Utilities
+#### 3. Utilities (`lib`)
 - **storage**
   - Save to localStorage
   - Load from localStorage
@@ -121,7 +134,7 @@ All files                  |   87.5  |    85.71 |   90.47 |   87.5  |
  components/TodoItem       |   88.23 |    87.5  |   90.0  |   88.23 |
  components/TodoForm       |   94.11 |    93.75 |   100   |   94.11 |
  hooks                     |   85.0  |    80.0  |   88.88 |   85.0  |
- utils                     |   75.0  |    70.83 |   80.0  |   75.0  |
+ lib                       |   75.0  |    70.83 |   80.0  |   75.0  |
 ---------------------------|---------|----------|---------|---------|
 ```
 

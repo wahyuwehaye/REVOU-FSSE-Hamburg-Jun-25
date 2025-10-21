@@ -6,11 +6,10 @@ Minggu ini membahas praktik testing yang komprehensif dan deployment untuk Next.
 - `materi/` – modul markdown lengkap tentang testing fundamentals, Jest setup, event testing, async operations, coverage, dan deployment strategies
 - `examples/`
   - `jest-basic-setup/` – contoh minimal setup Jest + React Testing Library di Next.js
-  - `component-testing-demo/` – berbagai contoh testing component, events, dan forms
-  - `async-testing-demo/` – testing API calls, async operations, loading states
+  - `component-testing-demo/` – contoh event/form/list testing dengan userEvent
+  - `async-testing-demo/` – mock API dengan MSW, testing async hooks & component states
 - `projects/`
-  - `todo-app-with-tests/` – proyek lengkap Todo App dengan comprehensive testing
-  - `shopping-cart-tested/` – Shopping cart dengan testing, coverage, dan Husky setup
+  - `todo-app-with-tests/` – Todo app lengkap dengan unit, event, dan coverage + Husky
 
 ## Agenda Presentasi 30 Menit
 | Menit | Fokus | Demo/Referensi |
