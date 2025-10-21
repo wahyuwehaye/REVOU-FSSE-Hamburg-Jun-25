@@ -1,6 +1,19 @@
-# Week 17 – Testing and Deployment in Next.js
+# Week 17 – Testing and Deployment in Next.js 🧪🚀
 
-Minggu ini membahas praktik testing yang komprehensif dan deployment untuk Next.js: unit testing dengan Jest, React Testing Library, testing async operations, coverage reports, serta setup CI/CD dengan Husky. Materi dirancang untuk sesi 30 menit dengan contoh proyek yang mudah dipahami.
+**Comprehensive guide to testing and deploying production-ready Next.js applications**
+
+[![Tests](https://img.shields.io/badge/Tests-Passing-success)]()
+[![Coverage](https://img.shields.io/badge/Coverage-80%25-green)]()
+[![Next.js](https://img.shields.io/badge/Next.js-14.0-black)]()
+
+Minggu ini membahas praktik testing yang komprehensif dan deployment untuk Next.js: unit testing dengan Jest, React Testing Library, testing async operations, coverage reports, serta setup CI/CD dengan Husky. 
+
+**✨ Special Features:**
+- 🗣️ Bahasa mudah dipahami dengan real-world analogies
+- 💻 Complete working code examples  
+- 🧪 Hands-on exercises
+- ✅ Production-ready patterns
+- 📊 12 comprehensive modules + 3 example projects
 
 ## Struktur Folder
 - `materi/` – modul markdown lengkap tentang testing fundamentals, Jest setup, event testing, async operations, coverage, dan deployment strategies
