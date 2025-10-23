@@ -6,21 +6,105 @@ This directory contains comprehensive unit tests for React hooks, components, an
 
 ### Hooks Tested
 
-#### 1. **useToggle** (`src/hooks/__tests__/useToggle.test.ts`)
-- ✅ Initializes with default value (false)
-- ✅ Initializes with custom default value
-- ✅ Toggle functionality
-- ✅ setTrue function
-- ✅ setFalse function
-- ✅ Stable function references
-- ✅ Multiple toggles in sequence
-- ✅ Combined operations (setTrue + toggle, setFalse + toggle)
+#### 2. Custom Hook: `useToggle`
+**File**: `src/hooks/__tests__/useToggle.test.ts`
+
+Tests a custom hook that manages boolean state (toggle functionality).
+
+**What we're testing:**
+- Hook initialization with default value
+- Toggle functionality
+- Setting specific values
+- Multiple toggle operations
+
+**Why important:**
+- Custom hooks are reusable logic that need testing
+- Need to ensure state changes work correctly
+- Test all possible operations (toggle, set true, set false)
+
+### 3. Custom Hook: `useFormState`
+**File**: `src/hooks/__tests__/useFormState.test.ts`
+
+Tests a custom hook for form state management with validation.
+
+**What we're testing:**
+- Form initialization with initial values
+- Field updates with handleChange
+- Form validation on submit
+- Error handling and display
+- Form reset functionality
+- Submission state management
+- isDirty state tracking
+
+**Why important:**
+- Form state management is complex with many edge cases
+- Validation logic must be tested thoroughly
+- Async submission needs proper handling
+- User experience depends on correct error states
+
+### 7. Context Provider: `CartContext`
+**File**: `src/context/__tests__/CartContext.test.tsx`
+
+Tests a complex context provider with cart state management.
+
+**What we're testing:**
+- Context initialization with empty cart
+- Add item functionality
+- Increment quantity for existing items
+- Remove item functionality
+- Clear cart functionality
+- Total calculations (items and price)
+- Context consumption error handling
+- Callback referential stability (performance)
+
+**Why important:**
+- Cart logic is business-critical functionality
+- State management must be bug-free
+- Calculations must be accurate
+- Performance optimization (memoization) needs validation
+- Error boundaries need testing
+
+### 8. Component with Context: `ThemeToggle`
+**File**: `src/components/__tests__/ThemeToggle.test.tsx`
+
+Tests a custom hook that consumes CartContext and provides cart summary.
+
+**What we're testing:**
+- Context consumption and integration
+- Summary memoization (performance optimization)
+- Cart operations (add, remove items)
+- Total calculations (items and price)
+
+**Why important:**
+- Tests integration between hook and context
+- Validates memoization prevents unnecessary re-renders
+- Ensures calculations are accurate
+
+### 5. Custom Hook: `useFetchProducts`
+**File**: `src/hooks/__tests__/useFetchProducts.test.ts`
+
+Tests an async data fetching hook with loading/error states.
+
+**What we're testing:**
+- Initial loading state
+- Successful data fetch
+- HTTP error handling (404, 500, etc.)
+- Network error handling
+- Refetch functionality
+- Endpoint change triggers new fetch
+
+**Why important:**
+- Async operations need thorough testing
+- Error handling is critical for user experience
+- Loading states must be accurate
+- Network failures must be handled gracefully
 
 **Total: 9 tests**
 
 ### Context Tested
 
-#### 2. **ThemeContext** (`src/context/__tests__/ThemeContext.test.tsx`)
+### 6. Context Provider: `ThemeContext`
+**File**: `src/context/__tests__/ThemeContext.test.tsx`
 - ✅ Provides default theme (light)
 - ✅ Toggle from light to dark
 - ✅ Toggle from dark to light
