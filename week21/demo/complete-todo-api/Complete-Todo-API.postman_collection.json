@@ -1,0 +1,637 @@
+{
+	"info": {
+		"_postman_id": "complete-todo-api-week21",
+		"name": "Complete Todo API - Week 21",
+		"description": "Comprehensive API collection covering all Week 21 NestJS materials including CRUD, validation, filtering, sorting, pagination, and search.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Base Endpoints",
+			"item": [
+				{
+					"name": "Welcome Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						},
+						"description": "Get welcome message with API information"
+					}
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Check API health status"
+					}
+				},
+				{
+					"name": "API Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/info",
+							"host": ["{{baseUrl}}"],
+							"path": ["info"]
+						},
+						"description": "Get detailed API information and features"
+					}
+				}
+			]
+		},
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "Create Todo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Complete NestJS Tutorial\",\n  \"description\": \"Learn all NestJS concepts for Week 21\",\n  \"completed\": false,\n  \"priority\": \"high\",\n  \"categoryId\": 1,\n  \"tags\": \"learning,nestjs\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "Create a new todo with validation"
+					}
+				},
+				{
+					"name": "Get All Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "Get all todos without any filters"
+					}
+				},
+				{
+					"name": "Get Incomplete Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?completed=false",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "completed",
+									"value": "false"
+								}
+							]
+						},
+						"description": "Filter todos by completion status"
+					}
+				},
+				{
+					"name": "Get High Priority Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?priority=high",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "priority",
+									"value": "high"
+								}
+							]
+						},
+						"description": "Filter todos by priority level"
+					}
+				},
+				{
+					"name": "Get Todos with Sorting",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?sortBy=createdAt&order=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "createdAt"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Sort todos by creation date in descending order"
+					}
+				},
+				{
+					"name": "Get Todos with Pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?page=1&limit=5",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Get paginated todos (5 per page)"
+					}
+				},
+				{
+					"name": "Search Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?search=meeting",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "search",
+									"value": "meeting"
+								}
+							]
+						},
+						"description": "Search todos by keyword in title or description"
+					}
+				},
+				{
+					"name": "Complex Query - Filter + Sort + Paginate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos?completed=false&priority=high&sortBy=createdAt&order=desc&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"],
+							"query": [
+								{
+									"key": "completed",
+									"value": "false"
+								},
+								{
+									"key": "priority",
+									"value": "high"
+								},
+								{
+									"key": "sortBy",
+									"value": "createdAt"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Combine filtering, sorting, and pagination"
+					}
+				},
+				{
+					"name": "Get Todo Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/statistics",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "statistics"]
+						},
+						"description": "Get statistics about todos"
+					}
+				},
+				{
+					"name": "Get Todo by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1"]
+						},
+						"description": "Get a specific todo by ID"
+					}
+				},
+				{
+					"name": "Update Todo (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"completed\": true,\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1"]
+						},
+						"description": "Partially update a todo"
+					}
+				},
+				{
+					"name": "Update Todo (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Title\",\n  \"description\": \"Fully updated todo\",\n  \"completed\": true,\n  \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1"]
+						},
+						"description": "Fully update a todo"
+					}
+				},
+				{
+					"name": "Mark as Completed",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/1/complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1", "complete"]
+						},
+						"description": "Mark a todo as completed"
+					}
+				},
+				{
+					"name": "Mark as Incomplete",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/1/incomplete",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1", "incomplete"]
+						},
+						"description": "Mark a todo as incomplete"
+					}
+				},
+				{
+					"name": "Bulk Delete Todos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ids\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/bulk-delete",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "bulk-delete"]
+						},
+						"description": "Delete multiple todos at once"
+					}
+				},
+				{
+					"name": "Delete Todo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "1"]
+						},
+						"description": "Delete a specific todo"
+					}
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Work\",\n  \"description\": \"Work-related tasks\",\n  \"color\": \"#3B82F6\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories"]
+						},
+						"description": "Create a new category"
+					}
+				},
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories"]
+						},
+						"description": "Get all categories"
+					}
+				},
+				{
+					"name": "Get Category Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/statistics",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", "statistics"]
+						},
+						"description": "Get statistics about categories"
+					}
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", "1"]
+						},
+						"description": "Get a specific category"
+					}
+				},
+				{
+					"name": "Get Todos by Category (Nested)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/1/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", "1", "todos"]
+						},
+						"description": "Get all todos belonging to a category (nested resource example)"
+					}
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Work\",\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", "1"]
+						},
+						"description": "Update a category"
+					}
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", "1"]
+						},
+						"description": "Delete a category (only if it has no todos)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Validation Examples",
+			"item": [
+				{
+					"name": "Valid Todo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Valid Task\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "✅ This should succeed"
+					}
+				},
+				{
+					"name": "Missing Required Field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"No title provided\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "❌ This should fail: Title is required"
+					}
+				},
+				{
+					"name": "Invalid Priority Value",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Task\",\n  \"priority\": \"invalid\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "❌ This should fail: Invalid priority value"
+					}
+				},
+				{
+					"name": "Title Too Short",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "❌ This should fail: Title must be at least 3 characters"
+					}
+				},
+				{
+					"name": "Title Too Long",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"This is a very long title that exceeds the maximum allowed length of 100 characters for testing validation rules in the API endpoint\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "❌ This should fail: Title exceeds max length"
+					}
+				},
+				{
+					"name": "Invalid Boolean Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Valid Task\",\n  \"completed\": \"yes\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos"]
+						},
+						"description": "❌ This should fail: completed must be boolean"
+					}
+				},
+				{
+					"name": "Non-existent Todo (404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/999",
+							"host": ["{{baseUrl}}"],
+							"path": ["todos", "999"]
+						},
+						"description": "❌ This should return 404 Not Found"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
