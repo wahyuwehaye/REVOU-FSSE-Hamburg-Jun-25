@@ -85,6 +85,93 @@ Setelah menyelesaikan week ini, students akan mampu:
     - Collections and environments
     - Testing validation
 
+### Part 3: Building CRUD API with Best Practices
+
+12. **[Review of CRUD Operations](./materi/12-review-crud-operations.md)**
+    - CRUD fundamentals
+    - HTTP methods mapping
+    - RESTful conventions
+    - Best practices
+
+13. **[Service Layer Implementation](./materi/13-service-layer-implementation.md)**
+    - Service layer pattern
+    - Business logic separation
+    - Dependency injection
+    - Complete examples
+
+14. **[Repository Pattern](./materi/14-repository-pattern.md)**
+    - Repository pattern explained
+    - Data access layer
+    - Architecture layers
+    - Library management example
+
+15. **[Implementing Complete CRUD API](./materi/15-implementing-complete-crud-api.md)**
+    - Task Management API
+    - Complete implementation
+    - All patterns combined
+    - Testing guide
+
+16. **[Custom Business Logic](./materi/16-custom-business-logic.md)**
+    - Business logic patterns
+    - Validation logic
+    - Calculation logic
+    - State transitions
+    - Authorization logic
+
+17. **[Request Lifecycle in NestJS](./materi/17-request-lifecycle-nestjs.md)**
+    - Request flow
+    - Middleware
+    - Guards
+    - Interceptors
+    - Pipes
+    - Exception filters
+
+### Part 4: API Documentation
+
+18. **[Importance of API Documentation](./materi/18-importance-api-documentation.md)**
+    - Why document APIs
+    - Types of documentation
+    - Good vs bad documentation
+    - Best practices
+
+19. **[Postman for API Documentation](./materi/19-postman-for-api-documentation.md)**
+    - Postman features
+    - Collections
+    - Environment variables
+    - Tests and scripts
+
+20. **[Documenting Endpoints with Decorators](./materi/20-documenting-endpoints-decorators.md)**
+    - Swagger/OpenAPI setup
+    - Common decorators
+    - Complete examples
+    - Export to Postman
+
+21. **[API Documentation Best Practices](./materi/21-api-documentation-best-practices.md)**
+    - Naming conventions
+    - Writing descriptions
+    - Providing examples
+    - Versioning
+    - Error documentation
+
+22. **[Creating Postman Collections](./materi/22-creating-postman-collections.md)**
+    - Collection structure
+    - Organizing requests
+    - Adding tests
+    - Using variables
+    - Running collections
+
+23. **[Sharing Documentation with Team](./materi/23-sharing-documentation-team.md)**
+    - Export/Import workflows
+    - Team workspaces
+    - Publishing documentation
+    - Collaboration best practices
+
+24. **[Export and Import Collections; Course Recap](./materi/24-export-import-collections-course-recap.md)**
+    - Export/Import detailed guide
+    - Week 21 complete recap
+    - What you've learned
+    - Next steps
+
 ## 🛠️ Demo Projects
 
 ### 1. [Basic NestJS API](./demo/basic-nestjs-api/)
