@@ -1,0 +1,391 @@
+{
+	"info": {
+		"_postman_id": "user-mgmt-api-demo",
+		"name": "Week 22 - User Management API",
+		"description": "Complete Postman collection for User Management API demonstrating DTOs, Pipes, and Validation in NestJS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Get Health Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Check if the API is running and healthy"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users - CRUD Operations",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 30,\n  \"phone\": \"+1-555-123-4567\",\n  \"address\": {\n    \"street\": \"123 Main Street\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Create a new user with complete validation.\n\n**Validation Rules:**\n- firstName: min 2 chars\n- lastName: min 2 chars\n- email: valid email format, will be lowercased\n- password: min 8 chars, must contain uppercase, lowercase, number/special char (will be hashed)\n- age: between 18-120\n- phone: international format\n- address: nested DTO validation"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Retrieve all users (passwords are excluded from response)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users with Pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 100)"
+								}
+							]
+						},
+						"description": "Get paginated users with page and limit query parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						},
+						"description": "Get a single user by ID. Uses ParseIntPipe to validate ID is a number."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Jane\",\n  \"email\": \"jane.doe@example.com\",\n  \"age\": 28\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						},
+						"description": "Update user (partial update). All fields are optional. Email will be validated for uniqueness."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						},
+						"description": "Soft delete a user (sets deletedAt timestamp, doesn't remove from database)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Seed Data",
+			"item": [
+				{
+					"name": "Seed Sample Users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/seed",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "seed"]
+						},
+						"description": "Create sample users for testing purposes"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation Tests",
+			"item": [
+				{
+					"name": "Invalid Email Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"invalid-email\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test validation - should fail with email validation error"
+					},
+					"response": []
+				},
+				{
+					"name": "Weak Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"weak\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test password strength validation - should fail"
+					},
+					"response": []
+				},
+				{
+					"name": "Age Below Minimum",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Young\",\n  \"lastName\": \"User\",\n  \"email\": \"young@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 15,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test age validation - should fail (min age is 18)"
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Phone Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 25,\n  \"phone\": \"invalid-phone\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test phone format validation - should fail"
+					},
+					"response": []
+				},
+				{
+					"name": "Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test required fields validation - should fail with multiple errors"
+					},
+					"response": []
+				},
+				{
+					"name": "Extra Fields (Forbidden)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  },\n  \"extraField\": \"This should be rejected\",\n  \"anotherExtra\": \"This too\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test forbidNonWhitelisted - should fail because of extra fields"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pipe Transformations",
+			"item": [
+				{
+					"name": "Email Transformation (Lowercase)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"TEST.USER@EXAMPLE.COM\",\n  \"password\": \"SecurePass123!\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test LowercaseEmailPipe - email will be converted to lowercase automatically"
+					},
+					"response": []
+				},
+				{
+					"name": "Whitespace Trimming",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"  Trimmed  \",\n  \"lastName\": \"  User  \",\n  \"email\": \"  trimmed@example.com  \",\n  \"password\": \"SecurePass123!\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"  123 Test St  \",\n    \"city\": \"  Test City  \",\n    \"state\": \"  TC  \",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test TrimPipe - all string values will have leading/trailing whitespace removed"
+					},
+					"response": []
+				},
+				{
+					"name": "Password Hashing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Secure\",\n  \"lastName\": \"User\",\n  \"email\": \"secure@example.com\",\n  \"password\": \"PlainTextPassword123!\",\n  \"age\": 25,\n  \"phone\": \"+1-555-000-0000\",\n  \"address\": {\n    \"street\": \"123 Test St\",\n    \"city\": \"Test City\",\n    \"state\": \"TC\",\n    \"zipCode\": \"12345\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Test HashPasswordPipe - password will be hashed with bcrypt before saving (check database to see hashed value)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3001",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,33 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { HealthController } from './health/health.controller';
+
+@Module({
+  imports: [
+    // Configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+
+    // Database
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_DATABASE || 'user_management_db',
+      autoLoadEntities: true,
+      synchronize: process.env.NODE_ENV !== 'production', // Don't use in production!
+      logging: process.env.NODE_ENV === 'development',
+    }),
+
+    // Feature modules
+    UsersModule,
+  ],
+  controllers: [HealthController],
+})
+export class AppModule {}

@@ -1,0 +1,429 @@
+{
+	"info": {
+		"_postman_id": "blog-api-middleware-demo",
+		"name": "Week 22 - Blog API with Middleware",
+		"description": "Complete Postman collection for Blog API demonstrating Middleware patterns including logging, authentication, rate limiting, and more",
+		"schema": "https://schema.getpostman.com/json/collection.v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health & Metrics",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Check API health status"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/metrics",
+							"host": ["{{baseUrl}}"],
+							"path": ["metrics"]
+						},
+						"description": "Get application metrics (memory usage, uptime)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts - Public Access (GET)",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Get all posts (no authentication required).\n\n**Middleware Applied:**\n- RequestIdMiddleware: Adds X-Request-ID header\n- LoggerMiddleware: Logs request details\n- ResponseTimeMiddleware: Adds X-Response-Time header\n- RateLimitMiddleware: Tracks request count"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts?category=Tutorial",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"],
+							"query": [
+								{
+									"key": "category",
+									"value": "Tutorial"
+								}
+							]
+						},
+						"description": "Filter posts by category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts", "1"]
+						},
+						"description": "Get single post by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts - Protected (Requires API Key)",
+			"item": [
+				{
+					"name": "Create Post (With API Key)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}",
+								"description": "Required for write operations"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Introduction to NestJS Middleware\",\n  \"content\": \"Middleware is a function which is called before the route handler. Middleware functions have access to the request and response objects.\",\n  \"category\": \"Tutorial\",\n  \"author\": \"John Doe\",\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Create a new post (requires API key).\n\n**Middleware Applied:**\n- RequestIdMiddleware\n- LoggerMiddleware\n- ApiKeyMiddleware: Validates X-API-KEY header\n- ResponseTimeMiddleware\n- RateLimitMiddleware"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post (Without API Key - Should Fail)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"This should fail\",\n  \"content\": \"No API key provided\",\n  \"category\": \"Test\",\n  \"author\": \"Test User\",\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test API key middleware - should return 401 Unauthorized"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post (With API Key)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated: Introduction to NestJS Middleware\",\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts", "1"]
+						},
+						"description": "Update existing post (requires API key)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts - Admin Only (IP Whitelist)",
+			"item": [
+				{
+					"name": "Delete Post (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/posts/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts", "1"]
+						},
+						"description": "Delete post (requires API key + whitelisted IP).\n\n**Middleware Applied:**\n- RequestIdMiddleware\n- LoggerMiddleware\n- ApiKeyMiddleware\n- IpWhitelistMiddleware: Checks if client IP is whitelisted\n- ResponseTimeMiddleware\n- RateLimitMiddleware\n\n**Note:** Only IPs in IP_WHITELIST env variable can access this endpoint"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Seed Data",
+			"item": [
+				{
+					"name": "Seed Sample Posts",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts/seed",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts", "seed"]
+						},
+						"description": "Create sample posts for testing"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Middleware Tests",
+			"item": [
+				{
+					"name": "Test Request ID Generation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Check response headers for X-Request-ID (auto-generated UUID)"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Custom Request ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Request-ID",
+								"value": "my-custom-request-id-12345",
+								"description": "Provide custom request ID"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test with custom request ID - should use provided ID instead of generating new one"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Response Time Header",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Check response headers for X-Response-Time (shows processing time in ms)"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Rate Limiting (Multiple Requests)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Send this request multiple times quickly to test rate limiting.\n\n**Rate Limit Headers:**\n- X-RateLimit-Limit: Maximum requests allowed\n- X-RateLimit-Remaining: Requests remaining\n- X-RateLimit-Reset: Timestamp when limit resets\n- Retry-After: Seconds to wait (only when limit exceeded)\n\n**Default:** 100 requests per 15 minutes"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Invalid API Key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "invalid-key-123"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Test\",\n  \"content\": \"This should fail\",\n  \"category\": \"Test\",\n  \"author\": \"Test\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test with invalid API key - should return 401 Unauthorized"
+					},
+					"response": []
+				},
+				{
+					"name": "Test IP Whitelist (Non-Admin IP)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts", "1"]
+						},
+						"description": "Test DELETE from non-whitelisted IP - should return 403 Forbidden\n\n**Note:** This will only work if your IP is NOT in the whitelist"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation Tests",
+			"item": [
+				{
+					"name": "Invalid Post - Short Title",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hi\",\n  \"content\": \"This content is long enough but title is too short\",\n  \"category\": \"Test\",\n  \"author\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test validation - title must be at least 5 characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Post - Short Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Valid Title Here\",\n  \"content\": \"Short\",\n  \"category\": \"Test\",\n  \"author\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test validation - content must be at least 20 characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Post - Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-KEY",
+								"value": "{{apiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Only Title Provided\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["posts"]
+						},
+						"description": "Test validation - should return errors for missing required fields"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3002",
+			"type": "string"
+		},
+		{
+			"key": "apiKey",
+			"value": "your-api-key-from-env",
+			"type": "string",
+			"description": "Get this from .env file (API_KEY variable)"
+		}
+	]
+}
