@@ -1,0 +1,1081 @@
+{
+  "info": {
+    "name": "Task Management API - Demo Sessions",
+    "description": "Complete Postman collection for Week 22 Demo Sessions - Task Management API\n\nThis collection demonstrates all concepts taught in the demo:\n- User Registration & Authentication\n- JWT Token Management\n- Profile Management\n- CRUD Operations for Tasks\n- Query Filters\n- Error Handling\n\n**Usage:**\n1. Create environment: Local or Production\n2. Set base_url variable\n3. Run register → login → save token automatically\n4. All protected routes will use saved token",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.not.have.property('password');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Register a new user account.\n\n**Validations:**\n- Email must be valid format\n- Password minimum 8 characters\n- Name 2-50 characters\n\n**Demo Concepts:**\n- DTOs with class-validator\n- Password hashing with bcrypt\n- Custom pipes (TrimPipe, LowercasePipe)\n- Duplicate email check"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has access token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('access_token');",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "});",
+                  "",
+                  "// Auto-save access token to environment",
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "    console.log(\"✅ Access token saved to environment\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with email and password to get JWT token.\n\n**Returns:**\n- access_token: JWT token valid for 24 hours\n- user: User information\n\n**Demo Concepts:**\n- Password verification with bcrypt\n- JWT token generation\n- Token payload structure\n- Auto-save token to environment"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Invalid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is correct\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql('Invalid credentials');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Test error handling for wrong password.\n\n**Expected:**\n- Status: 401 Unauthorized\n- Message: \"Invalid credentials\"\n\n**Security Note:**\n- Same error message for wrong password or non-existent user\n- Prevents email enumeration attacks"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints demonstrating:\n- User registration with validation\n- JWT authentication\n- Error handling"
+    },
+    {
+      "name": "2. User Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.not.have.property('password');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Get current logged-in user profile.\n\n**Authentication Required:** JWT Token\n\n**Demo Concepts:**\n- JwtAuthGuard protecting routes\n- CurrentUser decorator\n- Extracting user from JWT payload\n- Password excluded from response"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile - No Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error is Unauthorized\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Unauthorized');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Test protected route without token.\n\n**Expected:**\n- Status: 401 Unauthorized\n- Demonstrates Guard working correctly"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Name is updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.name).to.eql('John Updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Update user profile (name only).\n\n**Demo Concepts:**\n- Partial updates with UpdateProfileDto\n- @IsOptional() decorator\n- Only update fields provided"
+          },
+          "response": []
+        }
+      ],
+      "description": "User profile management with authentication"
+    },
+    {
+      "name": "3. Tasks - CRUD",
+      "item": [
+        {
+          "name": "Create Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Task created with correct data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData.title).to.eql('Buy groceries');",
+                  "    pm.expect(jsonData.status).to.eql('TODO');",
+                  "    pm.expect(jsonData.priority).to.eql('HIGH');",
+                  "    pm.expect(jsonData).to.have.property('userId');",
+                  "});",
+                  "",
+                  "// Save task ID for other requests",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set(\"task_id\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Buy groceries\",\n  \"description\": \"Milk, eggs, bread, vegetables\",\n  \"priority\": \"HIGH\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            },
+            "description": "Create a new task.\n\n**Fields:**\n- title: required, 3-100 characters\n- description: optional, max 500 characters\n- status: optional (default: TODO)\n- priority: optional (default: MEDIUM)\n\n**Demo Concepts:**\n- CreateTaskDto validation\n- Enum validation for status/priority\n- Default values\n- Auto-assign userId from JWT token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tasks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Tasks belong to current user\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(task => {",
+                  "        pm.expect(task).to.have.property('userId');",
+                  "        pm.expect(task).to.have.property('title');",
+                  "        pm.expect(task).to.have.property('status');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            },
+            "description": "Get all tasks for current user.\n\n**Demo Concepts:**\n- Filter by userId (security)\n- Order by createdAt DESC\n- Only return user's own tasks"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Task has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('priority');",
+                  "    pm.expect(jsonData).to.have.property('userId');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "{{task_id}}"]
+            },
+            "description": "Get single task by ID.\n\n**Demo Concepts:**\n- ParseIntPipe for ID validation\n- Check task belongs to user\n- 404 if not found"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Status updated to IN_PROGRESS\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('IN_PROGRESS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "{{task_id}}"]
+            },
+            "description": "Update task (partial update).\n\n**Demo Concepts:**\n- UpdateTaskDto with all optional fields\n- Object.assign for partial update\n- Only update provided fields"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Success message returned\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql('Task deleted successfully');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "{{task_id}}"]
+            },
+            "description": "Delete a task.\n\n**Demo Concepts:**\n- Check ownership before delete\n- Return success message\n- 404 if task not found or not owned"
+          },
+          "response": []
+        }
+      ],
+      "description": "Complete CRUD operations for tasks"
+    },
+    {
+      "name": "4. Tasks - Filters",
+      "item": [
+        {
+          "name": "Filter by Status - TODO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All tasks have status TODO\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(task => {",
+                  "        pm.expect(task.status).to.eql('TODO');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks?status=TODO",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "TODO"
+                }
+              ]
+            },
+            "description": "Get tasks with status TODO.\n\n**Demo Concepts:**\n- Query parameters\n- Conditional filtering in controller\n- Enum validation for query params"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Status - IN_PROGRESS",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks?status=IN_PROGRESS",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "IN_PROGRESS"
+                }
+              ]
+            },
+            "description": "Get tasks currently in progress."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Status - DONE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks?status=DONE",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "DONE"
+                }
+              ]
+            },
+            "description": "Get completed tasks."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Priority - HIGH",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"All tasks have priority HIGH\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(task => {",
+                  "        pm.expect(task.priority).to.eql('HIGH');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks?priority=HIGH",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "HIGH"
+                }
+              ]
+            },
+            "description": "Get high priority tasks."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Priority - URGENT",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks?priority=URGENT",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "URGENT"
+                }
+              ]
+            },
+            "description": "Get urgent priority tasks."
+          },
+          "response": []
+        }
+      ],
+      "description": "Query filters for tasks by status and priority"
+    },
+    {
+      "name": "5. Validation Tests",
+      "item": [
+        {
+          "name": "Invalid Email Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions email\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(JSON.stringify(jsonData.message)).to.include('Email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not-an-email\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Test @IsEmail() validation."
+          },
+          "response": []
+        },
+        {
+          "name": "Password Too Short",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions password length\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(JSON.stringify(jsonData.message)).to.include('Password');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"short\",\n  \"name\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Test @MinLength(8) validation."
+          },
+          "response": []
+        },
+        {
+          "name": "Missing Required Field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Test required field validation (name missing)."
+          },
+          "response": []
+        },
+        {
+          "name": "Extra Field Forbidden",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error mentions property should not exist\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(JSON.stringify(jsonData.message)).to.include('should not exist');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\",\n  \"isAdmin\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Test forbidNonWhitelisted validation.\n\nAttempts to inject 'isAdmin' field."
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Task Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error mentions valid status values\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(JSON.stringify(jsonData.message)).to.include('Status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Task\",\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            },
+            "description": "Test @IsEnum() validation.\n\nAttempts to use invalid status 'PENDING'."
+          },
+          "response": []
+        }
+      ],
+      "description": "Test validation rules and error handling"
+    },
+    {
+      "name": "6. Security Tests",
+      "item": [
+        {
+          "name": "Access Other User's Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Task not found (security check)\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql('Task not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/99999",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "99999"]
+            },
+            "description": "Test userId filtering.\n\nAttempts to access task that doesn't belong to user.\n\n**Expected:** 404 (not 403) to not reveal existence."
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Email Registration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is correct\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql('Email already registered');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password456\",\n  \"name\": \"John Smith\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            },
+            "description": "Test duplicate email check.\n\n**Expected:** 409 Conflict"
+          },
+          "response": []
+        }
+      ],
+      "description": "Security and authorization tests"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('🚀 Request:', pm.request.method, pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "const responseTime = pm.response.responseTime;",
+          "console.log('✅ Response time:', responseTime + 'ms');",
+          "",
+          "if (pm.response.headers.has('X-Request-Id')) {",
+          "    console.log('🔍 Request ID:', pm.response.headers.get('X-Request-Id'));",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
