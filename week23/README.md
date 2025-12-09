@@ -260,12 +260,12 @@ week23/
 │       └── solution/
 │
 ├── demo/                         # Main demo project
-│   └── library-management-api/   # Complete NestJS + PostgreSQL app
-│       ├── README.md
-│       ├── src/
-│       ├── migrations/
-│       ├── seeds/
-│       └── package.json
+│   └── library-api/              # ✅ Complete NestJS + PostgreSQL app
+│       ├── README.md             # ✅ Comprehensive documentation
+│       ├── src/                  # ✅ 6 modules, 37 endpoints
+│       ├── postman/              # ✅ Complete Postman collection
+│       ├── .env                  # ✅ Configuration
+│       └── package.json          # ✅ Dependencies installed
 │
 └── projects/                     # Student project templates
     ├── todo-api/                 # Beginner project
@@ -277,49 +277,103 @@ week23/
 
 ## 🎯 Demo Project: Library Management API
 
-Complete NestJS application demonstrating all concepts:
+✅ **COMPLETE & READY TO USE!** 
+
+Full-featured NestJS application demonstrating all Week 23 concepts.
+
+📍 **Location:** `week23/demo/library-api/`  
+📖 **Quick Start:** See [DEMO_QUICK_START.md](./DEMO_QUICK_START.md) for 5-minute setup  
+📚 **Full Documentation:** See [README.md](./demo/library-api/README.md) for architecture details  
 
 ### Features
-- ✅ User authentication (JWT)
-- ✅ Books CRUD with categories
-- ✅ Authors management
-- ✅ Borrowing system (relations)
-- ✅ Search and filtering
-- ✅ Database migrations
-- ✅ Data seeding
-- ✅ Query optimization
-- ✅ Production-ready setup
+
+- ✅ User authentication (JWT + bcrypt)
+- ✅ Books CRUD with categories & authors
+- ✅ Complete borrowing system with late fees
+- ✅ Advanced relationships (One-to-Many, Many-to-One)
+- ✅ Search and filtering (status, category, author)
+- ✅ Query optimization with TypeORM
+- ✅ Auto-generated slugs for categories
+- ✅ Availability tracking (auto-updates)
+- ✅ 37 API endpoints (15 public, 22 protected)
+- ✅ Production-ready setup with Docker
 
 ### Tech Stack
-- NestJS 10+
-- PostgreSQL 14+
-- TypeORM
-- JWT authentication
-- Class-validator
-- Docker setup
+
+- **NestJS 10+** - Progressive Node.js framework
+- **PostgreSQL 14+** - Relational database
+- **TypeORM 0.3.17** - Database ORM
+- **JWT** - Authentication
+- **bcrypt** - Password hashing
+- **class-validator** - DTO validation
+- **slugify** - URL-friendly slugs
+- **Docker** - PostgreSQL + pgAdmin containers
+
+### Database Schema
+
+5 tables with complex relationships:
+- **Users** (with roles: member/librarian/admin)
+- **Authors** (biography, country, website)
+- **Categories** (with auto-generated slugs)
+- **Books** (ISBN, availability tracking, status)
+- **Borrowings** (due dates, late fees, status)
 
 ### Quick Start
 
 ```bash
-cd demo/library-management-api
+cd demo/library-api
 
 # Install dependencies
 npm install
 
-# Setup PostgreSQL (Docker)
-docker-compose up -d
+# Create database
+createdb library_db
 
-# Run migrations
-npm run migration:run
+# Update .env (change DATABASE_USERNAME if needed)
+nano .env
 
-# Seed data
-npm run seed
+# Build and run
+npm run build
+node dist/main.js
 
-# Start development
-npm run start:dev
-
-# API available at: http://localhost:3000
+# API available at: http://localhost:3001/api
 ```
+
+### Testing
+
+**Option 1: cURL** (See DEMO_QUICK_START.md)
+```bash
+# Complete workflow with 9 cURL examples
+# Register → Author → Category → Book → Borrow → Return
+```
+
+**Option 2: Postman**
+```bash
+# Import collection
+postman/Library-API.postman_collection.json
+
+# Auto-saved variables for seamless testing
+```
+
+### Documentation Files
+
+- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Project overview & checklist
+- **[DEMO_QUICK_START.md](./DEMO_QUICK_START.md)** - 5-minute setup guide with cURL examples
+- **[demo/library-api/README.md](./demo/library-api/README.md)** - Full API documentation
+- **Postman Collection** - 37 endpoints with test scripts
+
+### Learning Objectives Covered
+
+✅ TypeORM entities with decorators  
+✅ Entity relationships (One-to-Many, Many-to-One)  
+✅ Repository pattern  
+✅ Query builder for complex queries  
+✅ JWT authentication & guards  
+✅ Password hashing with bcrypt  
+✅ Business logic (availability, late fees)  
+✅ Database design & normalization  
+✅ Foreign keys & constraints  
+✅ Enums for status values
 
 ---
 

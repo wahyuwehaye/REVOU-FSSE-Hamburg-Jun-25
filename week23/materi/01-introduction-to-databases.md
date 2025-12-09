@@ -97,15 +97,12 @@ User 3: DELETE FROM products WHERE id = 2
 Database mengatur **transaction** agar tidak ada konflik!
 
 ### 4. **Query & Search** (Pencarian Cepat)
-
 ```sql
 -- Cari semua user dengan email gmail yang register tahun 2024
 SELECT * FROM users 
 WHERE email LIKE '%@gmail.com' 
 AND EXTRACT(YEAR FROM created_at) = 2024;
 ```
-
-Coba lakukan pencarian seperti ini dengan array JavaScript! 😅
 
 ### 5. **Relationships** (Relasi Antar Data)
 

@@ -1,0 +1,1055 @@
+{
+	"info": {
+		"_postman_id": "library-api-2024",
+		"name": "Library Management API",
+		"description": "Complete REST API for managing a library system with books, authors, members, and borrowings.\n\n## Quick Start\n\n1. Import this collection\n2. Run **Auth > Register Librarian** to create admin user\n3. Token is auto-saved to `{{token}}` variable\n4. All other requests will use the saved token\n\n## Variables\n\nThis collection uses auto-saved variables:\n- `base_url`: API base URL (default: http://localhost:3001/api)\n- `token`: JWT authentication token\n- `user_id`: Last created/fetched user ID\n- `author_id`: Last created/fetched author ID\n- `category_id`: Last created/fetched category ID\n- `book_id`: Last created/fetched book ID\n- `borrowing_id`: Last created/fetched borrowing ID\n\nTest scripts automatically save IDs from responses for use in subsequent requests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set base_url if not already set",
+					"if (!pm.collectionVariables.get('base_url')) {",
+					"    pm.collectionVariables.set('base_url', 'http://localhost:3001/api');",
+					"}"
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register Librarian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('token', response.access_token);",
+									"    pm.collectionVariables.set('user_id', response.user.id);",
+									"    console.log('✅ Token saved:', response.access_token.substring(0, 20) + '...');",
+									"    console.log('✅ User ID saved:', response.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"librarian@library.com\",\n  \"fullName\": \"Library Admin\",\n  \"password\": \"library123\",\n  \"role\": \"librarian\",\n  \"phoneNumber\": \"08123456789\",\n  \"address\": \"Library Office, Building A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Register a new librarian user with admin privileges. Token is auto-saved for subsequent requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Register Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('member_token', response.access_token);",
+									"    pm.collectionVariables.set('member_id', response.user.id);",
+									"    console.log('✅ Member token saved');",
+									"    console.log('✅ Member ID saved:', response.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"member@example.com\",\n  \"fullName\": \"John Doe\",\n  \"password\": \"member123\",\n  \"role\": \"member\",\n  \"phoneNumber\": \"08198765432\",\n  \"address\": \"123 Main Street\",\n  \"membershipExpiryDate\": \"2025-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Register a regular member account. Saves token to `member_token` variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('token', response.access_token);",
+									"    console.log('✅ Token updated');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"librarian@library.com\",\n  \"password\": \"library123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login with existing credentials. Token is auto-saved."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for registration and login"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 && pm.response.json().length > 0) {",
+									"    const firstUser = pm.response.json()[0];",
+									"    pm.collectionVariables.set('user_id', firstUser.id);",
+									"    console.log('✅ User ID saved:', firstUser.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": ["{{base_url}}"],
+							"path": ["users"]
+						},
+						"description": "Get all users (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{user_id}}"]
+						},
+						"description": "Get specific user details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/stats",
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{user_id}}", "stats"]
+						},
+						"description": "Get user borrowing statistics (total and active borrowings)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phoneNumber\": \"08111222333\",\n  \"address\": \"456 New Street, City\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{user_id}}"]
+						},
+						"description": "Update user information (partial update)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{user_id}}"]
+						},
+						"description": "Delete user account"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints (all require authentication)"
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "Create Author",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('author_id', response.id);",
+									"    console.log('✅ Author ID saved:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"J.K. Rowling\",\n  \"biography\": \"British author, best known for the Harry Potter series of fantasy novels.\",\n  \"birthDate\": \"1965-07-31\",\n  \"country\": \"United Kingdom\",\n  \"website\": \"https://www.jkrowling.com\",\n  \"photoUrl\": \"https://example.com/jkrowling.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/authors",
+							"host": ["{{base_url}}"],
+							"path": ["authors"]
+						},
+						"description": "Create a new author (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Authors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 && pm.response.json().length > 0) {",
+									"    const firstAuthor = pm.response.json()[0];",
+									"    pm.collectionVariables.set('author_id', firstAuthor.id);",
+									"    console.log('✅ Author ID saved:', firstAuthor.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/authors",
+							"host": ["{{base_url}}"],
+							"path": ["authors"]
+						},
+						"description": "Get all authors (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Author by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/authors/{{author_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["authors", "{{author_id}}"]
+						},
+						"description": "Get specific author by ID (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"biography\": \"Updated biography with more details...\",\n  \"website\": \"https://www.jkrowling.com/updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/authors/{{author_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["authors", "{{author_id}}"]
+						},
+						"description": "Update author information (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Author",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/authors/{{author_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["authors", "{{author_id}}"]
+						},
+						"description": "Delete author (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Author management endpoints"
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('category_id', response.id);",
+									"    pm.collectionVariables.set('category_slug', response.slug);",
+									"    console.log('✅ Category ID saved:', response.id);",
+									"    console.log('✅ Category slug saved:', response.slug);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Fantasy\",\n  \"description\": \"Fantasy novels, magic, mythical creatures, and imaginary worlds\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": ["{{base_url}}"],
+							"path": ["categories"]
+						},
+						"description": "Create a new category (requires authentication). Slug is auto-generated."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 && pm.response.json().length > 0) {",
+									"    const firstCategory = pm.response.json()[0];",
+									"    pm.collectionVariables.set('category_id', firstCategory.id);",
+									"    pm.collectionVariables.set('category_slug', firstCategory.slug);",
+									"    console.log('✅ Category ID saved:', firstCategory.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": ["{{base_url}}"],
+							"path": ["categories"]
+						},
+						"description": "Get all categories (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "{{category_id}}"]
+						},
+						"description": "Get specific category by ID (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by Slug",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/slug/{{category_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "slug", "{{category_slug}}"]
+						},
+						"description": "Get category by URL-friendly slug (e.g., 'fantasy')"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description for fantasy category\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "{{category_id}}"]
+						},
+						"description": "Update category (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "{{category_id}}"]
+						},
+						"description": "Delete category (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Category management endpoints"
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Create Book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('book_id', response.id);",
+									"    console.log('✅ Book ID saved:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Harry Potter and the Philosopher's Stone\",\n  \"isbn\": \"978-0747532743\",\n  \"description\": \"The first book in the Harry Potter series. Harry discovers he is a wizard and begins his magical education.\",\n  \"publisher\": \"Bloomsbury Publishing\",\n  \"publishedDate\": \"1997-06-26\",\n  \"totalCopies\": 5,\n  \"availableCopies\": 5,\n  \"status\": \"available\",\n  \"coverImageUrl\": \"https://example.com/hp1.jpg\",\n  \"pageCount\": 223,\n  \"language\": \"English\",\n  \"authorId\": \"{{author_id}}\",\n  \"categoryId\": \"{{category_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books",
+							"host": ["{{base_url}}"],
+							"path": ["books"]
+						},
+						"description": "Create a new book (requires authentication). Ensure author and category exist first."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 && pm.response.json().length > 0) {",
+									"    const firstBook = pm.response.json()[0];",
+									"    pm.collectionVariables.set('book_id', firstBook.id);",
+									"    console.log('✅ Book ID saved:', firstBook.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books",
+							"host": ["{{base_url}}"],
+							"path": ["books"]
+						},
+						"description": "Get all books (public endpoint). Supports filtering by status, categoryId, authorId."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Books by Status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books?status=available",
+							"host": ["{{base_url}}"],
+							"path": ["books"],
+							"query": [
+								{
+									"key": "status",
+									"value": "available",
+									"description": "available | borrowed | maintenance | lost"
+								}
+							]
+						},
+						"description": "Filter books by status (available, borrowed, maintenance, lost)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Books by Category",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books?categoryId={{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["books"],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "{{category_id}}"
+								}
+							]
+						},
+						"description": "Filter books by category ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Books by Author",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books?authorId={{author_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["books"],
+							"query": [
+								{
+									"key": "authorId",
+									"value": "{{author_id}}"
+								}
+							]
+						},
+						"description": "Filter books by author ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/{{book_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["books", "{{book_id}}"]
+						},
+						"description": "Get specific book by ID (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book Statistics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/{{book_id}}/stats",
+							"host": ["{{base_url}}"],
+							"path": ["books", "{{book_id}}", "stats"]
+						},
+						"description": "Get book statistics (total and active borrowings)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book by ISBN",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/isbn/978-0747532743",
+							"host": ["{{base_url}}"],
+							"path": ["books", "isbn", "978-0747532743"]
+						},
+						"description": "Look up book by ISBN number"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"totalCopies\": 7,\n  \"availableCopies\": 6,\n  \"description\": \"Updated book description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books/{{book_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["books", "{{book_id}}"]
+						},
+						"description": "Update book information (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/{{book_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["books", "{{book_id}}"]
+						},
+						"description": "Delete book (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Book management endpoints with filtering and statistics"
+		},
+		{
+			"name": "Borrowings",
+			"item": [
+				{
+					"name": "Create Borrowing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('borrowing_id', response.id);",
+									"    console.log('✅ Borrowing ID saved:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{member_id}}\",\n  \"bookId\": \"{{book_id}}\",\n  \"borrowDate\": \"2024-12-02\",\n  \"dueDate\": \"2024-12-16\",\n  \"notes\": \"First borrowing\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/borrowings",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings"]
+						},
+						"description": "Create a new borrowing (requires authentication). Decreases book availability by 1."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Borrowings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 && pm.response.json().length > 0) {",
+									"    const firstBorrowing = pm.response.json()[0];",
+									"    pm.collectionVariables.set('borrowing_id', firstBorrowing.id);",
+									"    console.log('✅ Borrowing ID saved:', firstBorrowing.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings"]
+						},
+						"description": "Get all borrowings (requires authentication). Supports filtering by status, userId, bookId."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Borrowings by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings?status=borrowed",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings"],
+							"query": [
+								{
+									"key": "status",
+									"value": "borrowed",
+									"description": "borrowed | returned | overdue"
+								}
+							]
+						},
+						"description": "Filter borrowings by status (borrowed, returned, overdue)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Borrowings by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings?userId={{member_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings"],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{member_id}}"
+								}
+							]
+						},
+						"description": "Get all borrowings for a specific user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Borrowings by Book",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings?bookId={{book_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings"],
+							"query": [
+								{
+									"key": "bookId",
+									"value": "{{book_id}}"
+								}
+							]
+						},
+						"description": "Get all borrowings for a specific book"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Overdue Borrowings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings/overdue",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings", "overdue"]
+						},
+						"description": "Get all overdue borrowings (past due date and not returned)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Borrowing by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings/{{borrowing_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings", "{{borrowing_id}}"]
+						},
+						"description": "Get specific borrowing by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Return Book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"returnDate\": \"2024-12-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/borrowings/{{borrowing_id}}/return",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings", "{{borrowing_id}}", "return"]
+						},
+						"description": "Return a borrowed book. Calculates late fee automatically (Rp 5,000/day) and restores book availability."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Borrowing",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Updated notes for this borrowing\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/borrowings/{{borrowing_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings", "{{borrowing_id}}"]
+						},
+						"description": "Update borrowing information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Borrowing",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/borrowings/{{borrowing_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["borrowings", "{{borrowing_id}}"]
+						},
+						"description": "Delete borrowing (restores book availability if status is 'borrowed')"
+					},
+					"response": []
+				}
+			],
+			"description": "Borrowing management endpoints (all require authentication)"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3001/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "member_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "member_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "author_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category_slug",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "book_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "borrowing_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
