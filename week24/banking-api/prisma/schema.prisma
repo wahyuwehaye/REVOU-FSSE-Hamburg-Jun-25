@@ -1,0 +1,333 @@
+// Prisma Schema for Banking API
+// Demonstrates all relationship types from Week 24
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum untuk Role (RBAC)
+enum Role {
+  CUSTOMER      // Regular user
+  TELLER        // Bank teller (can assist customers)
+  MANAGER       // Branch manager (higher privileges)
+  ADMIN         // System admin (full access)
+}
+
+// Enum untuk Account Type
+enum AccountType {
+  SAVINGS       // Tabungan
+  CHECKING      // Giro
+  DEPOSIT       // Deposito
+}
+
+// Enum untuk Account Status
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+// Enum untuk Transaction Type
+enum TransactionType {
+  DEPOSIT       // Setor tunai
+  WITHDRAWAL    // Tarik tunai
+  TRANSFER      // Transfer antar rekening
+  PAYMENT       // Pembayaran (listrik, dll)
+  INTEREST      // Bunga deposito
+}
+
+// Enum untuk Transaction Status
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// Enum untuk Card Type
+enum CardType {
+  DEBIT
+  CREDIT
+}
+
+// Enum untuk Loan Status
+enum LoanStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  PAID_OFF
+  DEFAULTED
+}
+
+// ============================================================================
+// USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  role          Role      @default(CUSTOMER)
+  refreshToken  String?   @db.Text
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  customer      Customer?         // 1:1 - One user has one customer profile
+  accounts      Account[]         // 1:N - One user can have multiple accounts
+  beneficiaries Beneficiary[]     // 1:N - One user can have multiple beneficiaries
+  notifications Notification[]    // 1:N - One user can have multiple notifications
+  
+  @@index([email])
+  @@map("users")
+}
+
+// ============================================================================
+// CUSTOMER PROFILE (1:1 with User)
+// ============================================================================
+
+model Customer {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @unique  // Ensures 1:1 relationship
+  fullName        String
+  phoneNumber     String    @unique
+  identityNumber  String    @unique  // KTP/NIK
+  dateOfBirth     DateTime
+  address         String    @db.Text
+  city            String
+  postalCode      String
+  occupation      String?
+  monthlyIncome   Decimal?  @db.Decimal(15, 2)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loans           Loan[]    // 1:N - One customer can have multiple loans
+  
+  @@index([userId])
+  @@index([identityNumber])
+  @@map("customers")
+}
+
+// ============================================================================
+// ACCOUNT (1:N with User, 1:N with Transactions)
+// ============================================================================
+
+model Account {
+  id              Int           @id @default(autoincrement())
+  accountNumber   String        @unique
+  userId          Int
+  accountType     AccountType   @default(SAVINGS)
+  balance         Decimal       @default(0) @db.Decimal(15, 2)
+  currency        String        @default("IDR")
+  status          AccountStatus @default(ACTIVE)
+  overdraftLimit  Decimal       @default(0) @db.Decimal(15, 2)
+  interestRate    Decimal       @default(0) @db.Decimal(5, 2)
+  openedAt        DateTime      @default(now())
+  closedAt        DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactionsFrom    Transaction[]     @relation("FromAccount")    // 1:N - Transactions sent
+  transactionsTo      Transaction[]     @relation("ToAccount")      // 1:N - Transactions received
+  cards               Card[]            // 1:N - One account can have multiple cards
+  beneficiariesFrom   Beneficiary[]     @relation("BeneficiaryFromAccount")  // M:N via Beneficiary
+  
+  @@index([userId])
+  @@index([accountNumber])
+  @@map("accounts")
+}
+
+// ============================================================================
+// TRANSACTION (M:1 with Account - from & to)
+// ============================================================================
+
+model Transaction {
+  id                Int                 @id @default(autoincrement())
+  transactionNumber String              @unique
+  fromAccountId     Int?
+  toAccountId       Int?
+  type              TransactionType
+  amount            Decimal             @db.Decimal(15, 2)
+  fee               Decimal             @default(0) @db.Decimal(15, 2)
+  description       String?             @db.Text
+  status            TransactionStatus   @default(PENDING)
+  referenceNumber   String?
+  
+  // For tracking
+  balanceBefore     Decimal?            @db.Decimal(15, 2)
+  balanceAfter      Decimal?            @db.Decimal(15, 2)
+  processedBy       Int?                // Teller/Manager who processed
+  processedAt       DateTime?
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  fromAccount       Account?            @relation("FromAccount", fields: [fromAccountId], references: [id])
+  toAccount         Account?            @relation("ToAccount", fields: [toAccountId], references: [id])
+  
+  @@index([fromAccountId])
+  @@index([toAccountId])
+  @@index([transactionNumber])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// ============================================================================
+// CARD (M:1 with Account)
+// ============================================================================
+
+model Card {
+  id            Int       @id @default(autoincrement())
+  accountId     Int
+  cardNumber    String    @unique
+  cardType      CardType  @default(DEBIT)
+  cvv           String
+  pin           String    // Hashed
+  expiryDate    DateTime
+  isActive      Boolean   @default(true)
+  dailyLimit    Decimal   @default(5000000) @db.Decimal(15, 2)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  account       Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([cardNumber])
+  @@map("cards")
+}
+
+// ============================================================================
+// BENEFICIARY (Saved recipient for transfers) - M:N Pattern
+// ============================================================================
+
+model Beneficiary {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  fromAccountId     Int
+  beneficiaryName   String
+  beneficiaryBank   String
+  beneficiaryAccount String
+  nickname          String?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromAccount       Account   @relation("BeneficiaryFromAccount", fields: [fromAccountId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, fromAccountId, beneficiaryAccount])
+  @@index([userId])
+  @@map("beneficiaries")
+}
+
+// ============================================================================
+// LOAN (M:1 with Customer)
+// ============================================================================
+
+model Loan {
+  id                Int         @id @default(autoincrement())
+  loanNumber        String      @unique
+  customerId        Int
+  loanType          String      // Personal, Home, Car, etc
+  principal         Decimal     @db.Decimal(15, 2)
+  interestRate      Decimal     @db.Decimal(5, 2)
+  termMonths        Int
+  monthlyPayment    Decimal     @db.Decimal(15, 2)
+  remainingBalance  Decimal     @db.Decimal(15, 2)
+  status            LoanStatus  @default(PENDING)
+  approvedBy        Int?
+  approvedAt        DateTime?
+  startDate         DateTime?
+  endDate           DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  customer          Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  payments          LoanPayment[] // 1:N - One loan has many payments
+  
+  @@index([customerId])
+  @@index([loanNumber])
+  @@map("loans")
+}
+
+// ============================================================================
+// LOAN PAYMENT (M:1 with Loan)
+// ============================================================================
+
+model LoanPayment {
+  id                Int       @id @default(autoincrement())
+  loanId            Int
+  paymentNumber     Int
+  amount            Decimal   @db.Decimal(15, 2)
+  principal         Decimal   @db.Decimal(15, 2)
+  interest          Decimal   @db.Decimal(15, 2)
+  remainingBalance  Decimal   @db.Decimal(15, 2)
+  dueDate           DateTime
+  paidDate          DateTime?
+  isPaid            Boolean   @default(false)
+  lateFee           Decimal   @default(0) @db.Decimal(15, 2)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  loan              Loan      @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  @@unique([loanId, paymentNumber])
+  @@index([loanId])
+  @@map("loan_payments")
+}
+
+// ============================================================================
+// NOTIFICATION (1:N with User)
+// ============================================================================
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  title       String
+  message     String    @db.Text
+  type        String    // TRANSACTION, SECURITY, PROMOTION, etc
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================================
+// AUDIT LOG (For security and compliance)
+// ============================================================================
+
+model AuditLog {
+  id          Int       @id @default(autoincrement())
+  userId      Int?
+  action      String    // LOGIN, TRANSFER, UPDATE_PROFILE, etc
+  entity      String?   // User, Account, Transaction, etc
+  entityId    Int?
+  changes     String?   @db.Text // JSON string of changes
+  ipAddress   String?
+  userAgent   String?   @db.Text
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

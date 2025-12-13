@@ -1,0 +1,174 @@
+// This is your Prisma schema file
+// Week 24 Demo: Complete Blog API with all relationship types
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  password     String
+  role         Role      @default(READER)
+  refreshToken String?   @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  // One-to-One: User has one Profile
+  profile      Profile?
+  
+  // One-to-Many: User has many Posts
+  posts        Post[]
+  
+  // One-to-Many: User has many Comments
+  comments     Comment[]
+  
+  @@index([email])
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  AUTHOR
+  READER
+}
+
+// ============================================
+// PROFILE (One-to-One with User)
+// ============================================
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  bio       String?  @db.Text
+  avatar    String?
+  website   String?
+  location  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // One-to-One: Profile belongs to one User
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("profiles")
+}
+
+// ============================================
+// BLOG CONTENT
+// ============================================
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?
+  published   Boolean  @default(false)
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Many-to-One: Many Posts belong to one Author (User)
+  authorId    Int
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Many-to-One: Many Posts belong to one Category
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  // One-to-Many: Post has many Comments
+  comments    Comment[]
+  
+  // Many-to-Many: Post has many Tags through PostTag
+  tags        PostTag[]
+  
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([slug])
+  @@index([published])
+  @@map("posts")
+}
+
+// ============================================
+// CATEGORY (One-to-Many with Posts)
+// ============================================
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // One-to-Many: Category has many Posts
+  posts       Post[]
+  
+  @@map("categories")
+}
+
+// ============================================
+// COMMENTS (One-to-Many with Post and User)
+// ============================================
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Many-to-One: Many Comments belong to one Post
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  // Many-to-One: Many Comments belong to one Author (User)
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+// ============================================
+// TAGS (Many-to-Many with Posts)
+// ============================================
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  
+  // Many-to-Many: Tag has many Posts through PostTag
+  posts     PostTag[]
+  
+  @@map("tags")
+}
+
+// Join table for Many-to-Many relationship between Post and Tag
+model PostTag {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  tagId     Int
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+  @@map("post_tags")
+}

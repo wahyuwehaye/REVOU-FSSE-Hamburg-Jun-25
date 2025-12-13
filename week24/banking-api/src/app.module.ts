@@ -1,0 +1,36 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { AccountsModule } from './accounts/accounts.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { CardsModule } from './cards/cards.module';
+import { BeneficiariesModule } from './beneficiaries/beneficiaries.module';
+import { LoansModule } from './loans/loans.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { AdminModule } from './admin/admin.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 minute
+        limit: 10, // 10 requests per minute
+      },
+    ]),
+    PrismaModule,
+    AuthModule,
+    AccountsModule,
+    TransactionsModule,
+    CardsModule,
+    BeneficiariesModule,
+    LoansModule,
+    NotificationsModule,
+    AdminModule,
+  ],
+})
+export class AppModule {}
