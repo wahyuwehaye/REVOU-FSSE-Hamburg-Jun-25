@@ -36,6 +36,13 @@ TL-Session/
 ├── week14/         # Materi Week 14 - Next.js TypeScript & Advanced Practices
 ├── week15/         # Materi Week 15 - TypeScript Foundations for Next.js
 ├── week16/         # Materi Week 16 - Advanced Next.js Concepts
+├── week17/         # Materi Week 17 - Advanced Topics
+├── week24/         # Materi Week 24 - Prisma, JWT, RBAC & Security
+├── week25/         # Materi Week 25 - Testing Fundamentals in NestJS 🧪
+│   ├── materi/     # 15 Material files
+│   ├── projects/   # Todo API with full tests
+│   ├── examples/   # Testing examples
+│   └── exercises/  # Practice exercises
 └── README.md       # File ini
 ```
 
@@ -51,6 +58,9 @@ TL-Session/
 | Week 14 | Next.js TypeScript Advanced | ✅ Selesai | TypeScript setup, routing, forms, API CRUD, error handling |
 | Week 15 | TypeScript Foundations for Next.js | ✅ Selesai | Setup ulang, konfigurasi, tipe dasar, strategi migrasi `.tsx` |
 | Week 16 | Advanced Next.js Concepts | ✅ Selesai | Middleware & auth, state management, custom hooks, optimasi performa |
+| Week 17 | Advanced Topics | ✅ Selesai | Advanced patterns and implementations |
+| Week 24 | Prisma, JWT, RBAC & Security | ✅ Selesai | Database ORM, Authentication, Authorization, Token Management |
+| Week 25 | Testing Fundamentals in NestJS | ✅ Selesai | Testing philosophies, Jest, Mocking, Unit/Integration/E2E tests, CI/CD |
 
 ## 🛠️ Teknologi yang Dipelajari
 
