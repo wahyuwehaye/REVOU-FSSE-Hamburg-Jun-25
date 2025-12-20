@@ -24,10 +24,18 @@ Selamat datang di Week 25! Minggu ini kita akan deep dive ke dunia **testing** d
 11. **[Testing Controllers](./materi/11-testing-controllers.md)** - HTTP layer testing
 12. **[Integration Testing (E2E)](./materi/12-integration-testing-e2e.md)** - Full stack testing
 
-### Part 4: Best Practices & Deployment
+### Part 4: Best Practices & CI/CD
 13. **[Testing Best Practices](./materi/13-testing-best-practices.md)** - FIRST principles
 14. **[Debugging Tests](./materi/14-debugging-tests.md)** - Troubleshooting strategies
 15. **[CI/CD Integration](./materi/15-cicd-integration.md)** - Automated testing
+
+### Part 5: Deployment Fundamentals 🚀
+16. **[Deployment Fundamentals](./materi/16-deployment-fundamentals.md)** - Production vs Development
+17. **[Production vs Development](./materi/17-production-vs-development.md)** - Environment differences
+18. **[Environment Variables](./materi/18-environment-variables.md)** - Configuration management
+19. **[Docker Introduction](./materi/19-docker-introduction.md)** - Containerization basics
+20. **[Dockerfile for NestJS](./materi/20-dockerfile-nestjs.md)** - Creating production-ready images
+21. **[Deployment Strategies](./materi/21-deployment-strategies.md)** - Single-host to multi-host
 
 ---
 
@@ -43,6 +51,10 @@ Setelah menyelesaikan Week 25, kamu akan bisa:
 ✅ Manage **test data** dengan fixtures & factories  
 ✅ Measure dan improve **test coverage**  
 ✅ Setup **CI/CD pipeline** untuk automated testing  
+✅ Memahami **production vs development** environments  
+✅ Manage **environment variables** dengan aman  
+✅ Membuat **Docker containers** untuk NestJS apps  
+✅ Deploy aplikasi dengan **zero-downtime strategies**  
 
 ---
 
@@ -75,11 +87,17 @@ Baca materials secara berurutan (01-15) sambil practice di projects.
 
 ```
 week25/
-├── materi/                    # 📚 Learning materials (01-15)
+├── materi/                    # 📚 Learning materials (01-21)
 │   ├── 01-testing-philosophies.md
 │   ├── 02-testabilities.md
 │   ├── ...
-│   └── 15-cicd-integration.md
+│   ├── 15-cicd-integration.md
+│   ├── 16-deployment-fundamentals.md
+│   ├── 17-production-vs-development.md
+│   ├── 18-environment-variables.md
+│   ├── 19-docker-introduction.md
+│   ├── 20-dockerfile-nestjs.md
+│   └── 21-deployment-strategies.md
 │
 ├── projects/                  # 🎯 Complete projects
 │   └── todo-api-tested/       # Main project dengan full tests
@@ -111,9 +129,9 @@ week25/
 
 ## 🎓 How to Study
 
-### Week Plan (5 Days)
+### Week Plan (7 Days)
 
-#### **Day 1-2: Foundations**
+#### **Day 1-2: Testing Foundations**
 - Materi 01-04 (Philosophies, Testabilities, Fundamentals, Mocking)
 - Practice: Write unit tests untuk simple functions
 - Project: Setup testing environment
@@ -123,7 +141,7 @@ week25/
 - Practice: Test services dan guards
 - Project: Implement service tests
 
-#### **Day 4: Advanced & Integration**
+#### **Day 4: Advanced Testing & Integration**
 - Materi 09-12 (Fixtures, Coverage, Controllers, E2E)
 - Practice: Write integration tests
 - Project: Complete E2E tests
@@ -131,7 +149,17 @@ week25/
 #### **Day 5: Best Practices & CI/CD**
 - Materi 13-15 (Best Practices, Debugging, CI/CD)
 - Practice: Setup GitHub Actions
-- Project: Deploy with automated testing
+- Project: Automated testing pipeline
+
+#### **Day 6: Deployment Fundamentals**
+- Materi 16-18 (Deployment, Env Differences, Config Management)
+- Practice: Setup environment variables
+- Project: Prepare for production deployment
+
+#### **Day 7: Docker & Production Deployment**
+- Materi 19-21 (Docker, Dockerfile, Deployment Strategies)
+- Practice: Create Dockerfile and deploy
+- Project: Deploy Todo API to production
 
 ---
 
